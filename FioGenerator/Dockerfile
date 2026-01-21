@@ -7,15 +7,16 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["FioGenerator/FioGenerator.csproj", "FioGenerator/"]
-RUN dotnet restore "FioGenerator/FioGenerator.csproj"
+
+COPY ["FioGenerator.csproj", "."]
+RUN dotnet restore "FioGenerator.csproj"
+
 COPY . .
-WORKDIR "/src/FioGenerator"
-RUN dotnet build "./FioGenerator.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "FioGenerator.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./FioGenerator.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "FioGenerator.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
